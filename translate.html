@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      textarea {
+        height: 250px;
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      Translate from
+      <select onchange="get()" id="select1"></select>
+    </div>
+    <div>
+      Translate into
+      <select onchange="out()" id="select2"></select>
+    </div>
+    <textarea
+      id="query"
+      type="text"
+      placeholder="type or speak something"
+    ></textarea>
+    <textarea
+      readonly="readonly"
+      id="output"
+      type="text"
+      placeholder="Output"
+    ></textarea>
+    <button onclick="Translate()">Translate</button>
+    <button id="mic" onclick="speechToText()">Mic</button>
+    <button onclick="speak()">Speak</button>
+  </body>
+</html>
+<script>
+  var select3;
+  var select4;
+  async function getLanguage() {
+    let res = await fetch("https://libretranslate.de/languages");
+    let data = await res.json();
+    // console.log("languages",data);
+    let select1 = document.getElementById("select1");
+    let select2 = document.getElementById("select2");
+    data.forEach(({ code, name }) => {
+      // console.log(name,code);
+      let option1 = document.createElement("option");
+      option1.value = code;
+      option1.innerHTML = name;
+
+      let option2 = document.createElement("option");
+      option2.value = code;
+      option2.innerHTML = name;
+      select1.append(option1);
+      select2.append(option2);
+    });
+    select3 = select1.value;
+    console.log(select3);
+    select4 = select2.value;
+    console.log(select4);
+  }
+
+  getLanguage();
+
+  function get() {
+    select3 = select1.value;
+    console.log(select3);
+  }
+  var b;
+  function out() {
+    select4 = select2.value;
+    console.log(select4);
+  }
+
+  async function Translate() {
+    let query = document.getElementById("query").value;
+    let obj = {
+      q: query,
+      source: select3,
+      target: select4,
+    };
+    console.log("obj", obj);
+    let res = await fetch("https://libretranslate.de/translate", {
+      method: "POST",
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" },
+    });
+    let { translatedText } = await res.json();
+    console.log("data", translatedText);
+    document.getElementById("output").value = translatedText;
+    console.log(query);
+  }
+  function speechToText() {
+    let query = document.getElementById("query");
+    let mic = document.getElementById("mic");
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+
+    let recognition = new SpeechRecognition();
+
+    recognition.onstart = () => {
+      mic.innerHTML = "Mic is open";
+    };
+    recognition.onspeechend = () => {
+      mic.innerHTML = "Mic is closed";
+      recognition.stop();
+    };
+
+    recognition.onresult = ({ results }) => {
+      /*
+             SpeechRecognitionResultList {0: SpeechRecognitionResult, length: 1}
+0: SpeechRecognitionResult
+0: SpeechRecognitionAlternative {transcript: 'my name is Kartik Kapoor', confidence: 0.8415153622627258}
+isFinal: true
+length: 1
+[[Prototype]]: SpeechRecognitionResult
+length: 1
+[[Prototype]]: SpeechRecognitionResultList
+             */
+      console.log(results[0][0]);
+      query.value = results[0][0].transcript;
+    };
+    // start recognition
+    recognition.start();
+  }
+  function speak() {
+  let msg = document.getElementById("output").value;
+  let speech = new SpeechSynthesisUtterance();
+//   speech.lang = JSON.parse(localStorage.getItem(`lang`));
+ speech.text = msg;
+ speech.volume = 1;
+  speech.rate = 1;
+  speech.pitch = 1;
+
+  window.speechSynthesis.speak(speech);
+}
+
+</script>
