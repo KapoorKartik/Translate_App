@@ -5,36 +5,67 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet">
     <style>
+      
       textarea {
         height: 250px;
-        width: 400px;
+        width: 40%;
+      }
+      #main {
+        width: 80%;
+        margin : 10px auto;
+        text-align: center;
+      }
+     .btns   {
+      width : 80px;
+      height : 30px;
+     
+      }
+      button {
+        margin : 5px;
+      }
+      #div_3 {
+        display : flex;
+        justify-content : center;
+      }
+      select { 
+        background : transparent ;
+        border : none;
       }
     </style>
   </head>
   <body>
-    <div>
+  <div id="main">
+    <h1 style="font-family: monospace;">Translate</h1>
+    <div id="div_1">
       Translate from
-      <select onchange="get()" id="select1"></select>
-    </div>
-    <div>
-      Translate into
+      <select onchange="get()" id="select1"></select> 
+       Translate into
       <select onchange="out()" id="select2"></select>
     </div>
-    <textarea
-      id="query"
-      type="text"
-      placeholder="type or speak something"
-    ></textarea>
-    <textarea
-      readonly="readonly"
-      id="output"
-      type="text"
-      placeholder="Output"
-    ></textarea>
-    <button onclick="Translate()">Translate</button>
-    <button id="mic" onclick="speechToText()">Mic</button>
-    <button onclick="speak()">Speak</button>
+    
+ <div>
+  <textarea
+  id="query"
+  type="text"
+  placeholder="type or speak something"
+></textarea>
+<textarea
+  readonly="readonly"
+  id="output"
+  type="text"
+  placeholder="Output"
+></textarea>
+ </div>
+   <div id='div_3'>
+    <button id="mic" onclick="speechToText()" class="material-icons-outlined">mic_off </button>
+    <button class='btns' onclick="Translate()">Translate</button>
+    
+    <button class=btns onclick="speak()">Speak</button>
+   </div>
+  </div>
   </body>
 </html>
 <script>
@@ -102,10 +133,10 @@
     let recognition = new SpeechRecognition();
 
     recognition.onstart = () => {
-      mic.innerHTML = "Mic is open";
+      mic.innerHTML = `<span class="material-icons-outlined">mic</span>`;
     };
     recognition.onspeechend = () => {
-      mic.innerHTML = "Mic is closed";
+      mic.innerHTML = '<span class="material-icons-outlined">mic_off</span>';
       recognition.stop();
     };
 
@@ -129,7 +160,7 @@ length: 1
   function speak() {
   let msg = document.getElementById("output").value;
   let speech = new SpeechSynthesisUtterance();
-//   speech.lang = JSON.parse(localStorage.getItem(`lang`));
+  speech.lang = select4
  speech.text = msg;
  speech.volume = 1;
   speech.rate = 1;
